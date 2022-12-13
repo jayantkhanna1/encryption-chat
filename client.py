@@ -48,13 +48,6 @@ class GUI:
             "One Time Pad",
             "Rail Fence Cipher",
             "Columnar Cipher",
-            "DES",
-            "AES",
-            "RSA",
-            "RC4",
-            "ECC",
-            "DH Key Exchange",
-            "DSA Signature",
             "Hashing for integrity",
         ]
         def show():
@@ -167,12 +160,9 @@ class GUI:
             data = columnar_cipher.decrypt(data, key)
         elif self.cipher_widget == "Hashing for integrity":
             data = hashing_for_integrity.decrypt(data)
-        # elif self.cipher_widget == "Playfair Cipher":
-        #     data = playfair_cipher.decrypt(data, key)
-        # elif self.cipher_widget == "One Time Pad":
-        #     data = otp.decrypt(data, key)
-        # elif self.cipher_widget == "Rail Fence Cipher":
-        #     data = rail_fence_cipher.decrypt(data, key)
+        elif self.cipher_widget == "Hill Cipher":
+            data = hill_cipher.decrypt(data,key)
+        
 
         self.decrypt_widget.delete(0, "end")
         self.decrypt_widget.insert(0, data)
@@ -225,6 +215,8 @@ class GUI:
             data = columnar_cipher.encrypt(data, key)
         elif self.cipher_widget == "Hashing for integrity":
             data = hashing_for_integrity.encrypt(data,key)
+        elif self.cipher_widget == "Hill Cipher":
+            data = hill_cipher.encrypt(data,key)
         # default to caesar cipher
         else:
             data = caesar_cipher.encrypt(data, 15)
