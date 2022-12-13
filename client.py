@@ -1,14 +1,13 @@
 
-from tkinter import Tk, Frame, Scrollbar, Label, END, Entry, Text, VERTICAL, Button, messagebox #Tkinter Python Module for GUI  
+from tkinter import Tk, Frame, Scrollbar, Label, END, Entry, Text, VERTICAL, Button, messagebox #Tkinter Python Module for GUI
 import socket #Sockets for network connection
-import threading # for multiple proccess 
+import threading # for multiple proccess
 import caesar_cipher, monoalphabetic_cipher
 from tkinter import *
 
 class GUI:
     client_socket = None
     last_received_message = None
-    
     def __init__(self, master):
         self.root = master
         self.chat_transcript_area = None
@@ -24,12 +23,12 @@ class GUI:
 
     def initialize_socket(self):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # initialazing socket with TCP and IPv4
-        remote_ip = '127.0.0.1' # IP address 
+        remote_ip = '127.0.0.1' # IP address
         remote_port = 10319 #TCP port
         self.client_socket.connect((remote_ip, remote_port)) #connect to the remote server
 
     def initialize_gui(self): # GUI initializer
-        self.root.title("Socket Chat") 
+        self.root.title("Socket Chat")
         self.root.resizable(0, 0)
         self.display_chat_box()
         self.display_name_section()
@@ -38,7 +37,7 @@ class GUI:
         self.display_chat_entry_box()
         self.display_decrypt_section()
         self.display_decrypt_text()
-        
+
     def display_cipher_section(self):
         options = [
             "Caesar Cipher",
@@ -59,23 +58,23 @@ class GUI:
             "Hashing for integrity",
         ]
         def show():
-            self.cipher_widget = clicked.get() 
+            self.cipher_widget = clicked.get()
         # datatype of menu text
         clicked = StringVar()
-        
+
         # initial menu text
         clicked.set( "Select Cipher" )
-        
+
         # Create Dropdown menu
         drop = OptionMenu( root , clicked , *options )
         drop.pack()
-        
+
         # Create button, it will change label text
         button = Button( root , text = "Set This" , command = show ).pack()
-        
+
 
     def listen_for_incoming_messages_in_a_thread(self):
-        thread = threading.Thread(target=self.receive_message_from_server, args=(self.client_socket,)) # Create a thread for the send and receive in same time 
+        thread = threading.Thread(target=self.receive_message_from_server, args=(self.client_socket,)) # Create a thread for the send and receive in same time
         thread.start()
     #function to recieve msg
     def receive_message_from_server(self, so):
@@ -84,7 +83,7 @@ class GUI:
             if not buffer:
                 break
             message = buffer.decode('utf-8')
-         
+
             if "joined" in message:
                 user = message.split(":")[1]
                 message = user + " has joined"
@@ -130,7 +129,7 @@ class GUI:
         self.enter_text_widget.pack(side='left', pady=15)
         self.enter_text_widget.bind('<Return>', self.on_enter_key_pressed)
         frame.pack(side='top')
-    
+
     def display_decrypt_section(self):
         frame = Frame()
         Label(frame, text='Enter message to decrypt:', font=("Helvetica", 16)).pack(side='left', padx=10)
@@ -139,8 +138,8 @@ class GUI:
         self.decrypt_button = Button(frame, text="Decrypt", width=10, command=self.decrypt).pack(side='left')
         frame.pack(side='top', anchor='nw')
 
-    
-        
+
+
 
     def display_decrypt_text(self):
             frame = Frame()
@@ -150,7 +149,7 @@ class GUI:
     def decrypt(self):
         key = self.key_widget.get()
         data = self.decrypt_widget.get()
-        
+        print(data)
         # decrypt the data here
         if self.cipher_widget == "Caesar Cipher":
             data = caesar_cipher.decrypt(data, key)
@@ -158,7 +157,10 @@ class GUI:
             data = monoalphabetic_cipher.decrypt(data, key)
 
         # yaha pr data mein decrypted text aa rha hai but label mein show nhi hora for some reason
-        self.decrypt_label.config(text = data)
+        print(self.decrypt_widget)
+        self.decrypt_widget.delete(0, "end")
+        self.decrypt_widget.insert(0, data)
+
 
     def on_join(self):
         if len(self.name_widget.get()) == 0:
@@ -199,7 +201,7 @@ class GUI:
         # default to caesar cipher
         else:
             data = caesar_cipher.encrypt(data, 15)
-        # Check which cipher we need and call it 
+        # Check which cipher we need and call it
         message = (senders_name + data).encode('utf-8')
         self.chat_transcript_area.insert('end', message.decode('utf-8') + '\n')
         self.chat_transcript_area.yview(END)
@@ -213,7 +215,7 @@ class GUI:
             self.client_socket.close()
             exit(0)
 
-#the mail function 
+#the mail function
 if __name__ == '__main__':
     root = Tk()
     gui = GUI(root)
