@@ -2,7 +2,7 @@
 from tkinter import Tk, Frame, Scrollbar, Label, END, Entry, Text, VERTICAL, Button, messagebox #Tkinter Python Module for GUI
 import socket #Sockets for network connection
 import threading # for multiple proccess
-import caesar_cipher, monoalphabetic_cipher
+import caesar_cipher, monoalphabetic_cipher,polyalphabetic_cipher, hill_cipher, playfair_cipher,otp ,rail_fence_cipher,columnar_cipher,hashing_for_integrity #importing all the ciphers
 from tkinter import *
 
 class GUI:
@@ -149,15 +149,31 @@ class GUI:
     def decrypt(self):
         key = self.key_widget.get()
         data = self.decrypt_widget.get()
-        print(data)
+        print(self.cipher_widget)
         # decrypt the data here
         if self.cipher_widget == "Caesar Cipher":
             data = caesar_cipher.decrypt(data, key)
         elif self.cipher_widget == "Monoalphabetic Cipher":
             data = monoalphabetic_cipher.decrypt(data, key)
+        elif self.cipher_widget == "Polyalphabetic Cipher":
+            data = polyalphabetic_cipher.decrypt(data, key)
+        elif self.cipher_widget == "Playfair Cipher":
+            data = playfair_cipher.decrypt(data, key)
+        elif self.cipher_widget == "One Time Pad":
+            data = otp.decrypt(data, key)
+        elif self.cipher_widget == "Rail Fence Cipher":
+            data = rail_fence_cipher.decrypt(data, key)
+        elif self.cipher_widget == "Columnar Cipher":
+            data = columnar_cipher.decrypt(data, key)
+        elif self.cipher_widget == "Hashing for integrity":
+            data = hashing_for_integrity.decrypt(data)
+        # elif self.cipher_widget == "Playfair Cipher":
+        #     data = playfair_cipher.decrypt(data, key)
+        # elif self.cipher_widget == "One Time Pad":
+        #     data = otp.decrypt(data, key)
+        # elif self.cipher_widget == "Rail Fence Cipher":
+        #     data = rail_fence_cipher.decrypt(data, key)
 
-        # yaha pr data mein decrypted text aa rha hai but label mein show nhi hora for some reason
-        print(self.decrypt_widget)
         self.decrypt_widget.delete(0, "end")
         self.decrypt_widget.insert(0, data)
 
@@ -197,7 +213,18 @@ class GUI:
             data = caesar_cipher.encrypt(data, key)
         elif self.cipher_widget == "Monoalphabetic Cipher":
             data = monoalphabetic_cipher.encrypt(data, key)
-
+        elif self.cipher_widget == "Polyaplhabetic Cipher":
+            data = polyalphabetic_cipher.encrypt(data, key)
+        elif self.cipher_widget == "Playfair Cipher":
+            data = playfair_cipher.encrypt(data, key)
+        elif self.cipher_widget == "One Time Pad":
+            data = otp.encrypt(data, key)
+        elif self.cipher_widget == "Rail Fence Cipher":
+            data = rail_fence_cipher.encrypt(data, key)
+        elif self.cipher_widget == "Columnar Cipher":
+            data = columnar_cipher.encrypt(data, key)
+        elif self.cipher_widget == "Hashing for integrity":
+            data = hashing_for_integrity.encrypt(data,key)
         # default to caesar cipher
         else:
             data = caesar_cipher.encrypt(data, 15)
