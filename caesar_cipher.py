@@ -1,7 +1,6 @@
 def encrypt(text,s):
    result = ""
-   if type(s) != int:
-        s = 15
+   s=int(s)
    # transverse the plain text
    for i in range(len(text)):
       char = text[i]
@@ -12,4 +11,20 @@ def encrypt(text,s):
       # Encrypt lowercase characters in plain text
       else:
          result += chr((ord(char) + s - 97) % 26 + 97)
-      return result
+   return result
+
+def decrypt(message,key):
+    message = message.upper()
+    alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    result = ""
+    key = int(key)
+    for letter in message:
+        if letter in alpha: #if the letter is actually a letter
+            #find the corresponding ciphertext letter in the alphabet
+            letter_index = (alpha.find(letter) - key) % len(alpha)
+
+            result = result + alpha[letter_index]
+        else:
+            result = result + letter
+
+    return result

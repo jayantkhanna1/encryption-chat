@@ -2,7 +2,7 @@
 from tkinter import Tk, Frame, Scrollbar, Label, END, Entry, Text, VERTICAL, Button, messagebox #Tkinter Python Module for GUI  
 import socket #Sockets for network connection
 import threading # for multiple proccess 
-import caesar_cipher
+import caesar_cipher, monoalphabetic_cipher
 from tkinter import *
 
 class GUI:
@@ -17,6 +17,7 @@ class GUI:
         self.join_button = None
         self.key_widget = None
         self.cipher_widget = None
+        self.decrypt_label = None
         self.initialize_socket()
         self.initialize_gui()
         self.listen_for_incoming_messages_in_a_thread()
@@ -35,6 +36,8 @@ class GUI:
         self.display_cipher_section()
         self.display_key_section()
         self.display_chat_entry_box()
+        self.display_decrypt_section()
+        self.display_decrypt_text()
         
     def display_cipher_section(self):
         options = [
@@ -61,7 +64,7 @@ class GUI:
         clicked = StringVar()
         
         # initial menu text
-        clicked.set( "Monday" )
+        clicked.set( "Select Cipher" )
         
         # Create Dropdown menu
         drop = OptionMenu( root , clicked , *options )
@@ -106,7 +109,7 @@ class GUI:
         Label(frame, text='Enter your Key:', font=("Helvetica", 16)).pack(side='left', padx=10)
         self.key_widget = Entry(frame, width=50, borderwidth=2)
         self.key_widget.pack(side='left', anchor='e')
-        self.join_button = Button(frame, text="Join", width=10, command=self.on_join).pack(side='left')
+        self.join_button = Button(frame, text="SET KEY", width=10, command=self.on_join).pack(side='left')
         frame.pack(side='top', anchor='nw')
 
     def display_chat_box(self):
@@ -127,6 +130,35 @@ class GUI:
         self.enter_text_widget.pack(side='left', pady=15)
         self.enter_text_widget.bind('<Return>', self.on_enter_key_pressed)
         frame.pack(side='top')
+    
+    def display_decrypt_section(self):
+        frame = Frame()
+        Label(frame, text='Enter message to decrypt:', font=("Helvetica", 16)).pack(side='left', padx=10)
+        self.decrypt_widget = Entry(frame, width=50, borderwidth=2)
+        self.decrypt_widget.pack(side='left', anchor='e')
+        self.decrypt_button = Button(frame, text="Decrypt", width=10, command=self.decrypt).pack(side='left')
+        frame.pack(side='top', anchor='nw')
+
+    
+        
+
+    def display_decrypt_text(self):
+            frame = Frame()
+            self.decrypt_label =Label(frame, text=self.decrypt_label, font=("Serif", 12)).pack(side='top', anchor='w')
+            frame.pack(side='top', anchor='nw')
+
+    def decrypt(self):
+        key = self.key_widget.get()
+        data = self.decrypt_widget.get()
+        
+        # decrypt the data here
+        if self.cipher_widget == "Caesar Cipher":
+            data = caesar_cipher.decrypt(data, key)
+        elif self.cipher_widget == "Monoalphabetic Cipher":
+            data = monoalphabetic_cipher.decrypt(data, key)
+
+        # yaha pr data mein decrypted text aa rha hai but label mein show nhi hora for some reason
+        self.decrypt_label.config(text = data)
 
     def on_join(self):
         if len(self.name_widget.get()) == 0:
@@ -157,10 +189,16 @@ class GUI:
         senders_name = self.name_widget.get().strip() + ": "
         data = self.enter_text_widget.get(1.0, 'end').strip()
         key = self.key_widget.get()
+
+        # Encrypt with all ciphers here
         if self.cipher_widget == "Caesar Cipher":
             data = caesar_cipher.encrypt(data, key)
-        
+        elif self.cipher_widget == "Monoalphabetic Cipher":
+            data = monoalphabetic_cipher.encrypt(data, key)
 
+        # default to caesar cipher
+        else:
+            data = caesar_cipher.encrypt(data, 15)
         # Check which cipher we need and call it 
         message = (senders_name + data).encode('utf-8')
         self.chat_transcript_area.insert('end', message.decode('utf-8') + '\n')
